@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script type="text/javascript" src="Scripts/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+
+    <script type="text/javascript">
+        $.get('http://localhost:53690/Chat.svc/token?username=dave&password=password1', function (data) {
+            alert('logged on, token = ' + data);
+
+            $.ajax({
+                url: 'http://localhost:53690/Chat.svc/token/' + data,
+                type: 'DELETE'
+            }).done(function () { alert('logged out') }).fail(function () { alert('logout failed') });
+        }).fail(function() { alert('logon failed') });
+    </script>
+
+</body>
+</html>

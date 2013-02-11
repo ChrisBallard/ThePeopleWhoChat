@@ -12,7 +12,10 @@ let main argv =
     use host = new WebServiceHost(typeof<ChatService>, uri);
     host.Open()
 
-    Console.WriteLine("Service running on '{0}' - press any key to exit", uri.AbsolutePath)
-    Console.ReadKey() |> ignore
-
-    0
+    Console.WriteLine("Service running on '{0}' - press Q to exit", uri)
+    let rec wait() = 
+        match Console.ReadKey().Key with
+        | ConsoleKey.Q -> 0
+        | _ -> wait()
+    wait()
+    

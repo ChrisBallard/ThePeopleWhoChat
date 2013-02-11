@@ -5,6 +5,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.ServiceHos
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.Service", "ThePeopleWhoChat.Service\ThePeopleWhoChat.Service.fsproj", "{D78FABD6-5333-4DA6-86F7-A08031C74DE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThePeopleWhoChat.Web", "ThePeopleWhoChat.Web\ThePeopleWhoChat.Web.csproj", "{061E0C6E-3BFF-4B04-A99B-5A03432FEE92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{D78FABD6-5333-4DA6-86F7-A08031C74DE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D78FABD6-5333-4DA6-86F7-A08031C74DE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D78FABD6-5333-4DA6-86F7-A08031C74DE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{061E0C6E-3BFF-4B04-A99B-5A03432FEE92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{061E0C6E-3BFF-4B04-A99B-5A03432FEE92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{061E0C6E-3BFF-4B04-A99B-5A03432FEE92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{061E0C6E-3BFF-4B04-A99B-5A03432FEE92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
