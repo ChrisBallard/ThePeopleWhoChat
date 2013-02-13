@@ -5,16 +5,32 @@
     <script type="text/javascript" src="Scripts/jquery-1.9.1.min.js"></script>
 </head>
 <body>
-
+    Username:&nbsp;<input id="username" type="text" /><br />
+    Password:&nbsp;<input id="password" type="text" /><br />
+    <button id="login" onclick="login()" >Login</button>
+    &nbsp;
+    <button id="logout" onclick="logout()">Logout</button>
+    <hr />
+    Token:&nbsp;<input id="token" type="text" /><br />
     <script type="text/javascript">
-        $.get('http://localhost:53690/Chat.svc/token?username=dave&password=password1', function (data) {
-            alert('logged on, token = ' + data);
-
+        function login() {
+            var username = $("#username").val();
+            var password = $("#password").val();
+            $.get('/Chat.svc/token?username=' + username + '&password=' + password, function (token) {
+                $("#token").val(token);
+            }).fail(function () {
+                $("#token").val("login failed");
+            });
+        }
+        function logout() {
+            var token = $("#token").val();
             $.ajax({
-                url: 'http://localhost:53690/Chat.svc/token/' + data,
-                type: 'DELETE'
-            }).done(function () { alert('logged out') }).fail(function () { alert('logout failed') });
-        }).fail(function() { alert('logon failed') });
+                type: "DELETE",
+                url: "/Chat.svc/token/" + token
+            }).done(function (msg) {
+                $("#token").val("logged out");
+            }).fail(function () { alert('logout failed'); });
+        }
     </script>
 
 </body>
