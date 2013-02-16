@@ -43,6 +43,7 @@
     <Compile Include="ChatService.fs" />
     <Compile Include="ChatServiceClient.fs" />
     <None Include="packages.config" />
+    <Compile Include="LineParser.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

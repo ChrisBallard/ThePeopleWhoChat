@@ -196,18 +196,22 @@ let main _ =
         else 
             f(token,((!dataConnection).Value),args)
 
-    let mutable keepRunning = true
     let mutable token = ""
 
-    while keepRunning do
+    let rec consoleReader() = seq {
         Console.Write("> ")
+        let line = Console.ReadLine()
+        match line with
+        | "quit"
+        | "exit" -> Console.WriteLine("byebye")
+        | x -> yield x
+               yield! consoleReader()
+        }
+
+    for line in consoleReader() do
 
         try
-            match (Console.ReadLine().Split(' ') |> List.ofArray) with
-            | "quit"::args 
-            | "exit"::args ->
-                keepRunning <- false
-                Console.WriteLine("byebye")
+            match (line |> LineParser.SpaceSeperatedParser.Parse |> List.ofSeq) with
             | "help"::args -> Usage.Help()
             | "connectdb"::args ->
                 let db = connectDb(args)
