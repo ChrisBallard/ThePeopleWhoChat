@@ -41,8 +41,8 @@
     <Compile Include="IChatServiceClient.fs" />
     <Compile Include="ChatDataConnection.fs" />
     <Compile Include="ChatService.fs" />
-    <None Include="packages.config" />
     <Compile Include="ChatServiceClient.fs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
