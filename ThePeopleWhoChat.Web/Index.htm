@@ -3,10 +3,12 @@
 <head>
     <title>TPWC</title>
     <script type="text/javascript" src="Scripts/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/date.js"></script>
+    <script type="text/javascript" src="Scripts/ChatServiceClient.js"></script>
     <script type="text/javascript">
-        if (sessionStorage.token == null) {
+        service_redirectIfNotLoggedIn(function () {
             window.location.href = "Login.htm";
-        }
+        });
     </script>
 </head>
 <body>
@@ -15,33 +17,59 @@
     <button id="logout" onclick="logout()" >Logout</button>
     <hr />
 
-    <button id="listrooms" onclick="listrooms()" >List Rooms</button>
-    <span id="results" />
+    <button id="listsessions" onclick="listsessions()" >List Sessions</button>
+    <span id="sessions" />
+    <br />
+    <hr />
 
+    <button id="listrooms" onclick="listrooms()" >List Rooms</button>
+    <span id="rooms" />
+    <br />
+    <hr />
+    
+    <input id="roomId" type="text" />&nbsp;
+    <button id="enterRoom" onclick="enter()">Enter</button>&nbsp;
+    <button id="leaveRoom" onclick="leave()">Leave</button>
+    <span id="roomStatus" />
+    <br />
+    <hr />
+
+    <button id="getMessages" onclick="getmessages()" >Get Messages</button>
+    <span id="messages" />
+    <br />
+    <hr />
 
     <script type="text/javascript">
-        function listrooms() {
-            $.ajax({
-                type: "GET",
-                url: "/Chat.svc/rooms",
-                headers: { 'Session-Token': sessionStorage.token }
-            }).done(function (data) {
-                $("#results").html(data.map(function (room) {
-                    return "<br/>" + room.m_Item1 + " " + room.m_Item2['name@'];
-                }));
-            }).fail(function () {
-                $("#results").html('failed');
-            });
-
+        function listsessions() {
+            list_sessions(function (data) {
+                $("#sessions").html(data.map(function (session) {
+                    return "<br/>" + session.userName + " " + session.roomId + " -> " + session.lastTouch;
+                }))
+            }, function (msg) { $("#sessions").html(msg); });
         }
+        function listrooms() {
+            list_rooms(function (data) {
+                $("#rooms").html(data.map(function (room) {
+                    return "<br/>" + room.id + " " + room.name + " -> \"" + room.description + "\"";
+                }))
+            }, function (msg) { $("#rooms").html(msg); });
+        }
+        function enter() {
+            enter_room($("#roomId").val(),
+                function(msg) { $("#roomStatus").html(msg) },
+                function(msg) { $("#roomStatus").html(msg) })
+        }
+
         function logout() {
-            $.ajax({
-                type: "DELETE",
-                url: "/Chat.svc/token/" + sessionStorage.token
-            }).done(function () {
-                sessionStorage.setItem('token', null);
-                window.location.href = "/Login.htm";
-            }).fail(function (x, msg) { $("#results").val("logout failed: " + msg); });
+            service_logout(function () {  window.location.href = "/Login.htm"; },
+                function(msg) { $("#results").val(msg); });
+        }
+        function getmessages() {
+            get_messages(function (data) {
+                $("#messages").html(data.map(function (msg) {
+                    return "<br/>" + msg.userId + " " + msg.timestamp + ": " + msg.rawMessage;
+                }))
+            }, function (msg) { $("#messages").html(msg); });
         }
     </script>
   </body>

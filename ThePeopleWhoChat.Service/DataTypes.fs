@@ -6,6 +6,14 @@
     type Consts = 
         static member TokenHeaderName = "Session-Token"
         static member ErrorHeaderName = "Error-Message"
+        static member CacheHeaderName = "Cache-Control"
+        static member CacheNoCache = "no-cache"
+        static member CacheOneMinute = "public, max-age=60"
+
+    [<DataContract>]
+    type Identifier = {
+        [<DataMember>] mutable id: string
+        }
 
     [<DataContract>]
     type User = {

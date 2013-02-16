@@ -3,6 +3,8 @@
 <head>
     <title>Login</title>
     <script type="text/javascript" src="Scripts/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/date.js"></script>
+    <script type="text/javascript" src="Scripts/ChatServiceClient.js"></script>
 </head>
 <body>
     Username:&nbsp;<input id="username" type="text" />&nbsp;&nbsp;
@@ -16,20 +18,9 @@
             var username = $("#username").val();
             var password = $("#password").val();
 
-            $.ajax({
-                type: "PUT",
-                url: "/Chat.svc/token",
-                data: "{ \"username\":\"" + username + "\",\"password\":\"" + password + "\" }",
-                contentType: "application/json",
-                complete: function (xmlHttpRequest, status) {
-                    var token = xmlHttpRequest.getResponseHeader('Session-Token');
-                    sessionStorage.setItem('token', token);
-                }
-            }).done(function () {
+            service_login(username, password, function () {
                 window.location.href = "Index.htm";
-            }).fail(function (x, msg) {
-                $("#status").html("login failed: " + x.getResponseHeader('Error-Message'));
-            });
+            }, function (msg) { $("#status").html(msg) });
         }
     </script>
 </body>

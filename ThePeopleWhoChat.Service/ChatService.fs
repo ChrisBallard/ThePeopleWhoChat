@@ -15,6 +15,8 @@
             WebOperationContext.Current.OutgoingResponse.Headers.Add(Consts.TokenHeaderName, x)
         let getToken() =
             WebOperationContext.Current.IncomingRequest.Headers.[Consts.TokenHeaderName]    
+        let cache(s) =
+            WebOperationContext.Current.OutgoingResponse.Headers.Add(Consts.CacheHeaderName, s)
         let setFault(status,err) =
             WebOperationContext.Current.OutgoingResponse.StatusCode <- status
             WebOperationContext.Current.OutgoingResponse.Headers.Add(Consts.ErrorHeaderName,err)       
@@ -43,7 +45,10 @@
         [<WebGet(UriTemplate="sessions",ResponseFormat=WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)>]
         [<OperationContract>]
         member this.ListSessions() =
-            this.ImplementationWrapper((fun () -> data.ListSessions(getToken())),Array.empty)
+            this.ImplementationWrapper((fun () ->
+                cache(Consts.CacheNoCache)
+                data.ListSessions(getToken())
+                ),Array.empty)
 
         [<WebInvoke(Method = "PUT", UriTemplate="users", RequestFormat = WebMessageFormat.Json, 
                     ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)>]
@@ -59,7 +64,10 @@
         [<WebGet(UriTemplate="users",ResponseFormat=WebMessageFormat.Json, BodyStyle=WebMessageBodyStyle.Bare)>]
         [<OperationContract>]
         member this.ListUsers() =
-            this.ImplementationWrapper((fun () -> data.ListUsers(getToken())),Array.empty)
+            this.ImplementationWrapper((fun () -> 
+                cache(Consts.CacheOneMinute)
+                data.ListUsers(getToken())
+                ),Array.empty)
                                         
         [<WebInvoke(Method = "PUT", UriTemplate="rooms", RequestFormat = WebMessageFormat.Json, 
                     ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)>]
@@ -75,13 +83,16 @@
         [<WebGet(UriTemplate="rooms",ResponseFormat=WebMessageFormat.Json)>]
         [<OperationContract>]
         member this.ListRooms() =
-            this.ImplementationWrapper((fun () -> data.ListRooms(getToken())),Array.empty)
+            this.ImplementationWrapper((fun () -> 
+                cache(Consts.CacheOneMinute)
+                data.ListRooms(getToken())
+                ),Array.empty)
 
         [<WebInvoke(Method = "PUT", UriTemplate="currentroom", RequestFormat = WebMessageFormat.Json, 
                     BodyStyle = WebMessageBodyStyle.Bare)>]
         [<OperationContract>]
-        member this.EnterRoom(roomId:string) =
-            this.ImplementationWrapper((fun () -> data.EnterRoom(getToken(),roomId)),())
+        member this.EnterRoom(room:Identifier) =
+            this.ImplementationWrapper((fun () -> data.EnterRoom(getToken(),room.id)),())
 
         [<WebInvoke(Method = "DELETE", UriTemplate="currentroom")>]
         [<OperationContract>]
@@ -92,6 +103,7 @@
         [<OperationContract>]
         member this.GetMessages(after:string) =
             this.ImplementationWrapper((fun () -> 
+                cache(Consts.CacheNoCache)
                 let valid,date = DateTime.TryParse(after)
                 if valid then
                     let results = data.GetMessages(getToken(),date)

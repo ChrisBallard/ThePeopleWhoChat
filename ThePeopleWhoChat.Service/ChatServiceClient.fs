@@ -59,6 +59,9 @@
         member private x.putDataUnit<'T>(token:string,path:string,data:'T) =
             let fullPath = String.Format("{0}/{1}",url,path)
             let req = x.makeRequest(token,"PUT",fullPath,data)
+//            let rs = req.GetRequestStream()
+//            use sr = new StreamReader(rs)
+//            let reqTxt = sr.ReadToEnd()
             x.getResponseUnit(req)
         member private x.putData<'T,'U>(token:string,path:string,data:'T) =
             let fullPath = String.Format("{0}/{1}",url,path)
@@ -110,7 +113,7 @@
                 this.getData<(string * Room) array>(token, "rooms")
                 
             member this.EnterRoom(token:string, roomId:string) =
-                this.putDataUnit<string>(token,"currentroom",roomId)
+                this.putDataUnit<Identifier>(token,"currentroom",{id = roomId})
 
             member this.LeaveRoom(token:string) =
                 this.deleteData(token,"currentroom")

@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Chat.svc" />
+    <Content Include="Scripts\ChatServiceClient.js" />
     <Content Include="Index.htm" />
     <Content Include="Login.htm" />
     <Content Include="packages.config" />
