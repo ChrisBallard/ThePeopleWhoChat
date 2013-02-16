@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Login</title>
+    <script type="text/javascript" src="Scripts/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+    Username:&nbsp;<input id="username" type="text" />&nbsp;&nbsp;
+    Password:&nbsp;<input id="password" type="password" />&nbsp;&nbsp;
+    <button id="login" onclick="login()" >Login</button>
+    <br />
+    <span id="status" style="color: red" />
+
+    <script type="text/javascript">
+        function login() {
+            var username = $("#username").val();
+            var password = $("#password").val();
+
+            $.ajax({
+                type: "PUT",
+                url: "/Chat.svc/token",
+                data: "{ \"username\":\"" + username + "\",\"password\":\"" + password + "\" }",
+                contentType: "application/json",
+                complete: function (xmlHttpRequest, status) {
+                    var token = xmlHttpRequest.getResponseHeader('Session-Token');
+                    sessionStorage.setItem('token', token);
+                }
+            }).done(function () {
+                window.location.href = "Index.htm";
+            }).fail(function (x, msg) {
+                $("#status").html("login failed: " + x.getResponseHeader('Error-Message'));
+            });
+        }
+    </script>
+</body>
+</html>
