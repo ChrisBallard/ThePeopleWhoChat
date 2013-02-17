@@ -4,6 +4,7 @@
     open System.Runtime.Serialization
 
     type Consts = 
+        static member DbUrlSettingKey = "ChatDbUrl"
         static member TokenHeaderName = "Session-Token"
         static member ErrorHeaderName = "Error-Message"
         static member CacheHeaderName = "Cache-Control"

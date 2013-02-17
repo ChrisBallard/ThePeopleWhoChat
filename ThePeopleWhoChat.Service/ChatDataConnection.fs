@@ -4,19 +4,18 @@
     open System.IO
     open System.Linq
     open System.Collections.Generic
-    open Raven.Client.Embedded
     open Raven.Client
+    open Raven.Client.Document
     open Raven
 
     type ChatDataConnection(dbPath:string) =
 
-        let docStore = new EmbeddableDocumentStore()
+        let docStore = new DocumentStore()
+
         let sessionCache = new List<LoginSession>()
 
         do
-            let dbDir = DirectoryInfo(dbPath)
-            Console.WriteLine("Connecting to database in: {0}", dbDir.FullName)
-            docStore.DataDirectory <- dbDir.FullName
+            docStore.Url <- dbPath
             docStore.Initialize() |> ignore
 
         member this.sessionWrapper<'a> (token:string) (isPriv:bool) (saveAfter:bool) (f:(IDocumentSession * LoginSession) -> 'a) =

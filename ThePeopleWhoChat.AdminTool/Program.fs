@@ -1,11 +1,12 @@
 ﻿open ThePeopleWhoChat.Service
 open System
+open System.Configuration
 open System.Text
 
 type Usage =
     static member General = "Invalid command. Type 'help' for further information."
     static member Connect = "connect [url]"
-    static member ConnectDb = "connectdb [dbPath]"
+    static member ConnectDb = "connectdb [dbUrl]"
     static member Login = "login <username>"
     static member Logout = "logout"
     static member ListSessions = "listsessions"
@@ -45,12 +46,13 @@ let getPassword(prompt:string) =
     pw.ToString()
 
 let connectDb(args) =
-    let dbPath = 
+    let dbUrl = 
         match args with
-        | [] -> @"C:\RavenDB"
+        | [] -> ConfigurationManager.AppSettings.[Consts.DbUrlSettingKey]
         | x::[] -> x
         | _ -> raise (System.InvalidProgramException(Usage.ConnectDb))
-    let rawDb = ChatDataConnection(dbPath)
+    let rawDb = ChatDataConnection(dbUrl)
+    Console.WriteLine("Connected directly to database {0}",dbUrl)
     if rawDb.IsDbEmpty() then
         Console.WriteLine("Database is empty. Creating user 'root'")
         let rootPw = getPassword("Enter root password: ")

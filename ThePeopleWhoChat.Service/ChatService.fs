@@ -1,14 +1,17 @@
 ﻿namespace ThePeopleWhoChat.Service
 
     open System
+    open System.Configuration
     open System.ServiceModel
     open System.ServiceModel.Web
+    open System.ServiceModel.Activation
     open System.Net
     open System.Collections.Generic
 
     [<ServiceContract>]
-    [<ServiceBehaviorAttribute(ConcurrencyMode=ConcurrencyMode.Multiple,
+    [<ServiceBehaviorAttribute(ConcurrencyMode=ConcurrencyMode.Single,
         InstanceContextMode=InstanceContextMode.Single)>]
+    [<AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)>]
     type ChatService() =
 
         let setToken x =
@@ -23,7 +26,8 @@
         let unauthorized err = setFault(HttpStatusCode.Unauthorized,err)         
         let badrequest err = setFault(HttpStatusCode.BadRequest,err)         
 
-        let data = ChatDataConnection(@"C:\RavenDB") :> IChatServiceClient
+        let dbUrl = ConfigurationManager.AppSettings.[Consts.DbUrlSettingKey]
+        let data = ChatDataConnection(dbUrl) :> IChatServiceClient
 
         member private this.ImplementationWrapper<'U>(f:unit->'U,empty:'U) =
             try f()
