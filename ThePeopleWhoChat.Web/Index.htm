@@ -3,7 +3,7 @@
 <head>
     <title>TPWC</title>
     <script type="text/javascript" src="Scripts/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="Scripts/date.js"></script>
+    <script type="text/javascript" src="Scripts/moment.min.js"></script>
     <script type="text/javascript" src="Scripts/ChatServiceClient.js"></script>
     <script type="text/javascript">
         service_redirectIfNotLoggedIn(function () {
@@ -39,6 +39,12 @@
     <br />
     <hr />
 
+    <input id="messageText" type="text" />&nbsp;
+    <button id="postMessage" onclick="postmessage()">Post</button>&nbsp;
+    <span id="postMessageStatus" />
+    <br />
+    <hr />
+    
     <script type="text/javascript">
         function listsessions() {
             list_sessions(function (data) {
@@ -67,9 +73,14 @@
         function getmessages() {
             get_messages(function (data) {
                 $("#messages").html(data.map(function (msg) {
-                    return "<br/>" + msg.userId + " " + msg.timestamp + ": " + msg.rawMessage;
+                    return "<br/>" + msg.userName + " " + moment(msg.timestamp).format("HHmm: ") + msg.rawMessage;
                 }))
             }, function (msg) { $("#messages").html(msg); });
+        }
+        function postmessage() {
+            post_message($("#messageText").val(),
+                function () { getmessages() },
+                function (err) { $("#postMessageStatus").html(err) })
         }
     </script>
   </body>

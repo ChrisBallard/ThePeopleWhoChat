@@ -7,6 +7,8 @@
     open System.ServiceModel.Activation
     open System.Net
     open System.Collections.Generic
+    open ThePeopleWhoChat.Core
+    open ThePeopleWhoChat.Data
 
     [<ServiceContract>]
     [<ServiceBehaviorAttribute(ConcurrencyMode=ConcurrencyMode.Single,
@@ -118,5 +120,5 @@
         [<WebInvoke(Method = "PUT", UriTemplate="messages", RequestFormat = WebMessageFormat.Json, 
                     BodyStyle = WebMessageBodyStyle.Bare)>]
         [<OperationContract>]
-        member this.PostMessage(message:string) =
-            this.ImplementationWrapper((fun () -> data.PostMessage(getToken(),message)),())
+        member this.PostMessage(m:MessageText) =
+            this.ImplementationWrapper((fun () -> data.PostMessage(getToken(),m.message)),())

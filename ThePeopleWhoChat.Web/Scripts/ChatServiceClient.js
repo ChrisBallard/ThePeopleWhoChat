@@ -91,8 +91,7 @@ function list_rooms(success,failure) {
 }
 
 function enter_room(roomId,success,failure) {
-    var params = {};
-    params.id = roomId;
+    var params = { id: roomId };
 
     $.ajax({
         type: "PUT",
@@ -120,7 +119,7 @@ function leave_room(success, failure) {
 }
 
 function get_messages(success, failure) {
-    var date = (6).months().ago().toString("yyyy-MM-ddThh:mm:ss")
+    var date = moment().subtract('days', 14).format("YYYY-MM-DDTHH:mm:ss")
 
     $.ajax({
         type: "GET",
@@ -128,26 +127,26 @@ function get_messages(success, failure) {
         headers: { 'Session-Token': sessionStorage.token }
     }).done(function (data) {
         var cleanData = data.map(function (msg) {
-            return { userId: msg.userId, timestamp: msg.timestamp, rawMessage: msg.rawMessage }
+            return { userName: msg.userName, timestamp: msg.timestamp, rawMessage: msg.rawMessage }
         })
         success(cleanData)
     }).fail(function (x, msg) {
         failure("get messages failed: " + x.getResponseHeader('Error-Message'));
     });
 }
-//[<WebGet(UriTemplate="messages?after={after}",ResponseFormat=WebMessageFormat.Json)>]
-//[<OperationContract>]
-//member this.GetMessages(after:string) =
-//this.ImplementationWrapper((fun () -> 
-//    let valid,date = DateTime.TryParse(after)
-//    if valid then
-//        let results = data.GetMessages(getToken(),date)
-//        results
-//else failwith (sprintf "Invalid date: %s" after)
-//    ), Array.empty)
 
-//[<WebInvoke(Method = "PUT", UriTemplate="messages", RequestFormat = WebMessageFormat.Json, 
-//        BodyStyle = WebMessageBodyStyle.Bare)>]
-//[<OperationContract>]
-//member this.PostMessage(message:string) =
-//this.ImplementationWrapper((fun () -> data.PostMessage(getToken(),message)),())
+function post_message(message, success, failure) {
+    var params = { message: message }
+
+    $.ajax({
+        type: "PUT",
+        url: baseUrl + "messages",
+        data: JSON.stringify(params),
+        contentType: "application/json",
+        headers: { 'Session-Token': sessionStorage.token }
+    }).done(function () {
+        success();
+    }).fail(function (x, msg) {
+        failure("post message failed: " + x.getResponseHeader('Error-Message'));
+    });
+}

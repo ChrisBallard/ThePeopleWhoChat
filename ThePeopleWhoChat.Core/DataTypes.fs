@@ -1,4 +1,4 @@
-﻿namespace ThePeopleWhoChat.Service
+﻿namespace ThePeopleWhoChat.Core
 
     open System
     open System.Runtime.Serialization
@@ -17,9 +17,14 @@
         }
 
     [<DataContract>]
+    type MessageText = {
+        [<DataMember>] mutable message: string
+        }
+
+    [<DataContract>]
     type User = {
         [<DataMember>] mutable name: string;
-        [<DataMember>] mutable password: string;
+        [<DataMember>] mutable passwordHash: string;
         [<DataMember>] mutable fullName: string;
         [<DataMember>] mutable isAdmin: bool
         }
@@ -34,7 +39,7 @@
     type Message = {
         [<DataMember>] mutable roomId: string;
         [<DataMember>] mutable timestamp: DateTime;
-        [<DataMember>] mutable userId: string;
+        [<DataMember>] mutable userName: string;
         [<DataMember>] mutable rawMessage: string;
         [<DataMember>] mutable html: string
         }

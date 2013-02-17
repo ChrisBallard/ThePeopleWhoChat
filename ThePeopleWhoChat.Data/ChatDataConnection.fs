@@ -1,4 +1,4 @@
-﻿namespace ThePeopleWhoChat.Service
+﻿namespace ThePeopleWhoChat.Data
 
     open System
     open System.IO
@@ -7,6 +7,7 @@
     open Raven.Client
     open Raven.Client.Document
     open Raven
+    open ThePeopleWhoChat.Core
 
     type ChatDataConnection(dbPath:string) =
 
@@ -35,7 +36,7 @@
             session.Query<User>().Count() = 0
         member this.InitRootUser(password:string) =
             use session = docStore.OpenSession()
-            let user = { name = "root"; password = password; fullName = "System Account"; isAdmin = true }
+            let user = { name = "root"; passwordHash = PasswordHash.GenerateHashedPassword(password); fullName = "System Account"; isAdmin = true }
             session.Store(user)
             session.SaveChanges()
 
@@ -46,7 +47,7 @@
                 match box user with
                 | null -> failwith "Login failed"
                 | _ ->
-                    if user.password = password then
+                    if PasswordHash.VerifyPassword(password,user.passwordHash) then
                         if sessionCache.Any(fun ls -> ls.user = user) then
                             let ls = sessionCache.Where(fun ls -> ls.user = user).First()
                             ls.lastTouch <- DateTime.Now
@@ -138,7 +139,7 @@
                 this.sessionWrapper token false true (fun (session,us) ->
                     match us.roomId with
                     | Some roomId ->
-                        let msg = { roomId = roomId; timestamp = DateTime.Now; userId = us.userId; 
+                        let msg = { roomId = roomId; timestamp = DateTime.Now; userName = us.user.name; 
                                     rawMessage = message; html = message }
                         session.Store(msg)
                     | None -> failwith "not in a room"

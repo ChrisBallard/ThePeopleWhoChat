@@ -59,9 +59,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThePeopleWhoChat.Service\ThePeopleWhoChat.Service.fsproj">
-      <Name>ThePeopleWhoChat.Service</Name>
-      <Project>{d78fabd6-5333-4da6-86f7-a08031c74de5}</Project>
+    <ProjectReference Include="..\ThePeopleWhoChat.Core\ThePeopleWhoChat.Core.fsproj">
+      <Name>ThePeopleWhoChat.Core</Name>
+      <Project>{d55b90a6-8223-47b2-b4fa-233f02e89d9a}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\ThePeopleWhoChat.Data\ThePeopleWhoChat.Data.fsproj">
+      <Name>ThePeopleWhoChat.Data</Name>
+      <Project>{8bdefb41-3b4c-410c-bba3-f149ba9658a6}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

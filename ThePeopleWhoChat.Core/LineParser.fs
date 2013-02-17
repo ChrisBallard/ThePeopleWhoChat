@@ -1,4 +1,4 @@
-﻿namespace ThePeopleWhoChat.Service
+﻿namespace ThePeopleWhoChat.Core
 
     open System
 

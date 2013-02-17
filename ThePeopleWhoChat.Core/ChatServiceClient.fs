@@ -1,4 +1,4 @@
-﻿namespace ThePeopleWhoChat.Service
+﻿namespace ThePeopleWhoChat.Core
 
     open System
     open System.Text
@@ -6,7 +6,6 @@
     open System.IO
     open System.Web
     open System.Runtime.Serialization.Json
-    open Raven.Imports.Newtonsoft.Json
 
     type ServiceClient(url:string) =
 
@@ -59,9 +58,6 @@
         member private x.putDataUnit<'T>(token:string,path:string,data:'T) =
             let fullPath = String.Format("{0}/{1}",url,path)
             let req = x.makeRequest(token,"PUT",fullPath,data)
-//            let rs = req.GetRequestStream()
-//            use sr = new StreamReader(rs)
-//            let reqTxt = sr.ReadToEnd()
             x.getResponseUnit(req)
         member private x.putData<'T,'U>(token:string,path:string,data:'T) =
             let fullPath = String.Format("{0}/{1}",url,path)
@@ -122,4 +118,4 @@
                 this.getData<Message array>(token, String.Format("messages?after={0}",from))
 
             member this.PostMessage(token:string, message:string) =
-                this.putDataUnit<string>(token,"messages",message)
+                this.putDataUnit<MessageText>(token,"messages",{message = message})

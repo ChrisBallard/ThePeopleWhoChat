@@ -1,4 +1,5 @@
-﻿open ThePeopleWhoChat.Service
+﻿open ThePeopleWhoChat.Core
+open ThePeopleWhoChat.Data
 open System
 open System.Configuration
 open System.Text
@@ -102,7 +103,7 @@ let adduser(token,svc:IChatServiceClient,args) =
     match args with
     | name::password::fullName::isAdminStr::[] ->
         let isAdminValid,isAdmin = bool.TryParse(isAdminStr)
-        let user = { name = name; password = password; fullName = fullName; isAdmin = if isAdminValid then isAdmin else false}
+        let user = { name = name; passwordHash = PasswordHash.GenerateHashedPassword(password); fullName = fullName; isAdmin = if isAdminValid then isAdmin else false}
         let userId = svc.AddUser(token,user)
         Console.WriteLine("Created new user: {0} with id: {1}", name, userId)
     | _ -> raise (System.InvalidProgramException(Usage.AddUser))
@@ -120,7 +121,7 @@ let listusers(token,svc:IChatServiceClient,args) =
         let users = svc.ListUsers(token)
         Console.WriteLine("Full user list:")
         for (userId,user) in users do
-            Console.WriteLine("    id: {0}, name: {1}, fullname: {2}, isAdmin: {3}", userId, user.name, user.fullName, user.isAdmin)
+            Console.WriteLine("    id: {0}, name: {1}, pwhash: {2}, fullname: {3}, isAdmin: {4}", userId, user.name, user.passwordHash, user.fullName, user.isAdmin)
     | _ -> raise (System.InvalidProgramException(Usage.ListUsers))            
       
 let addroom(token,svc:IChatServiceClient,args) =
@@ -171,7 +172,7 @@ let getmessages(token,svc:IChatServiceClient,args) =
         | [] -> svc.GetMessages(token,DateTime.MinValue)
         | _ -> raise (System.InvalidProgramException(Usage.GetMessages))
     for m in messages do
-        Console.WriteLine("  {0} {1:HHmm} {2}", m.userId, m.timestamp, m.rawMessage)
+        Console.WriteLine("  {0} {1:HHmm} {2}", m.userName, m.timestamp, m.rawMessage)
                       
 let postmessage(token,svc:IChatServiceClient,args) =
     match args with
