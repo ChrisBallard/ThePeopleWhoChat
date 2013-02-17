@@ -23,6 +23,7 @@
 
     [<DataContract>]
     type User = {
+        [<DataMember>] mutable Id: string;
         [<DataMember>] mutable name: string;
         [<DataMember>] mutable passwordHash: string;
         [<DataMember>] mutable fullName: string;
@@ -31,12 +32,14 @@
 
     [<DataContract>]
     type Room = {
+        [<DataMember>] mutable Id: string;
         [<DataMember>] mutable name: string;
         [<DataMember>] mutable description: string
         }
 
     [<DataContract>]
     type Message = {
+        [<DataMember>] mutable Id: string;
         [<DataMember>] mutable roomId: string;
         [<DataMember>] mutable timestamp: DateTime;
         [<DataMember>] mutable userName: string;

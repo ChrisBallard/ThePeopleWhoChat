@@ -34,4 +34,4 @@
             match saltedHash.Split(separatorChar) with
             | [| hash; salt |] -> PasswordHash.VerifyHash(Encoding.UTF8.GetBytes(password),
                                     Convert.FromBase64String(hash), Convert.FromBase64String(salt))
-            | _ -> failwith "Hashed password is incorrectly formatted"
+            | _ -> false

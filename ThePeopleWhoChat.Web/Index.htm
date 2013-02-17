@@ -12,36 +12,64 @@
     </script>
 </head>
 <body>
-    <h2>TPWC</h2>
-    <h4>Here are the people who chat...</h4>
-    <button id="logout" onclick="logout()" >Logout</button>
-    <hr />
+    <div id="container" style="width:auto">
 
-    <button id="listsessions" onclick="listsessions()" >List Sessions</button>
-    <span id="sessions" />
-    <br />
-    <hr />
+        <div id="header" style="background-color:#FFA500;">
+            <h2>TPWC</h2>
+            <h4>Here are the people who chat...</h4>
+            <button id="logout" onclick="logout()" >Logout</button>
+            <hr />
 
-    <button id="listrooms" onclick="listrooms()" >List Rooms</button>
-    <span id="rooms" />
-    <br />
-    <hr />
+            <button id="listsessions" onclick="listsessions()" >List Sessions</button>
+            <span id="sessions" />
+            <br />
+            <hr />
+
+            <button id="listrooms" onclick="listrooms()" >List Rooms</button>
+            <span id="rooms" />
+            <br />
+            <hr />
     
-    <input id="roomId" type="text" />&nbsp;
-    <button id="enterRoom" onclick="enter()">Enter</button>&nbsp;
-    <button id="leaveRoom" onclick="leave()">Leave</button>
-    <span id="roomStatus" />
-    <br />
-    <hr />
+            <input id="roomId" type="text" />&nbsp;
+            <button id="enterRoom" onclick="enter()">Enter</button>&nbsp;
+            <button id="leaveRoom" onclick="leave()">Leave</button>
+            <span id="roomStatus" />
+            <br />
+            <hr />
+        </div>
 
-    <button id="getMessages" onclick="getmessages()" >Get Messages</button>
-    <span id="messages" />
-    <br />
-    <hr />
+        <div id="menu" style="background-color:#FFD700;height:200px;width:40px;float:left;">
 
-    <input id="messageText" type="text" />&nbsp;
-    <button id="postMessage" onclick="postmessage()">Post</button>&nbsp;
-    <span id="postMessageStatus" />
+
+        </div>
+
+        <div id="content" style="background-color:#EEEEEE;height:200px;width:auto;float:left;">
+            <div id="messageListArea" style="height:auto">
+                <button id="getMessages" onclick="getmessages()" >Get Messages</button>
+                <span id="messages" />
+            </div>
+
+            <div id="messagePostArea" style="height:100px">
+                <input id="messageText" type="text" />&nbsp;
+                <button id="postMessage" onclick="postmessage()">Post</button>&nbsp;
+                <span id="postMessageStatus" />
+
+            </div>
+        </div>
+
+
+        <div id="footer" style="background-color:#FFA500;clear:both;text-align:center;">
+
+
+        </div>
+
+    </div>
+
+
+
+
+
+
     <br />
     <hr />
     
@@ -56,7 +84,7 @@
         function listrooms() {
             list_rooms(function (data) {
                 $("#rooms").html(data.map(function (room) {
-                    return "<br/>" + room.id + " " + room.name + " -> \"" + room.description + "\"";
+                    return "<br/>" + room.Id + " " + room.name + " -> \"" + room.description + "\"";
                 }))
             }, function (msg) { $("#rooms").html(msg); });
         }

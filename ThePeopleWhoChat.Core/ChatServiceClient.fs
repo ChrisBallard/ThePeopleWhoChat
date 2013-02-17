@@ -96,7 +96,7 @@
                 else failwith (sprintf "invalid userId: %s" userId)
 
             member this.ListUsers(token:string) =
-                this.getData<(string * User) array>(token,"users")
+                this.getData<User array>(token,"users")
 
             member this.AddRoom(token:string, room:Room) =
                 this.putData<Room,string>(token,"rooms",room)
@@ -106,7 +106,7 @@
                 else failwith (sprintf "invalid roomId: %s" roomId)
 
             member this.ListRooms(token:string) =
-                this.getData<(string * Room) array>(token, "rooms")
+                this.getData<Room array>(token, "rooms")
                 
             member this.EnterRoom(token:string, roomId:string) =
                 this.putDataUnit<Identifier>(token,"currentroom",{id = roomId})

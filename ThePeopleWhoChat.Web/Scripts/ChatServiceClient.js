@@ -81,10 +81,7 @@ function list_rooms(success,failure) {
         url: baseUrl + "rooms",
         headers: { 'Session-Token': sessionStorage.token }
     }).done(function (data) {
-        var cleanData = data.map(function (room) {
-            return { id: room.m_Item1, name: room.m_Item2['name'], description: room.m_Item2['description'] }
-        })
-        success(cleanData)
+        success(data)
     }).fail(function (x, msg) {
         failure("list rooms failed: " + x.getResponseHeader('Error-Message'));
     });

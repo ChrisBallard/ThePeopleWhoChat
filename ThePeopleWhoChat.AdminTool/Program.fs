@@ -103,7 +103,7 @@ let adduser(token,svc:IChatServiceClient,args) =
     match args with
     | name::password::fullName::isAdminStr::[] ->
         let isAdminValid,isAdmin = bool.TryParse(isAdminStr)
-        let user = { name = name; passwordHash = PasswordHash.GenerateHashedPassword(password); fullName = fullName; isAdmin = if isAdminValid then isAdmin else false}
+        let user = { Id = null; name = name; passwordHash = PasswordHash.GenerateHashedPassword(password); fullName = fullName; isAdmin = if isAdminValid then isAdmin else false}
         let userId = svc.AddUser(token,user)
         Console.WriteLine("Created new user: {0} with id: {1}", name, userId)
     | _ -> raise (System.InvalidProgramException(Usage.AddUser))
@@ -120,14 +120,14 @@ let listusers(token,svc:IChatServiceClient,args) =
     | [] ->
         let users = svc.ListUsers(token)
         Console.WriteLine("Full user list:")
-        for (userId,user) in users do
-            Console.WriteLine("    id: {0}, name: {1}, pwhash: {2}, fullname: {3}, isAdmin: {4}", userId, user.name, user.passwordHash, user.fullName, user.isAdmin)
+        for user in users do
+            Console.WriteLine("    id: {0}, name: {1}, pwhash: {2}, fullname: {3}, isAdmin: {4}", user.Id, user.name, user.passwordHash, user.fullName, user.isAdmin)
     | _ -> raise (System.InvalidProgramException(Usage.ListUsers))            
       
 let addroom(token,svc:IChatServiceClient,args) =
     match args with
     | name::description::[] ->
-        let room = { name = name; description = description }
+        let room = { Id = null; name = name; description = description }
         let roomId = svc.AddRoom(token,room)
         Console.WriteLine("Created new room: {0} with id: {1}", name, roomId)
     | _ -> raise (System.InvalidProgramException(Usage.AddRoom))
@@ -144,8 +144,8 @@ let listrooms(token,svc:IChatServiceClient,args) =
     | [] ->
         let rooms = svc.ListRooms(token)
         Console.WriteLine("Full room list:")
-        for roomId,room in rooms do
-            Console.WriteLine("    id: {0}, name: {1}, description: {2}", roomId, room.name, room.description)
+        for room in rooms do
+            Console.WriteLine("    id: {0}, name: {1}, description: {2}", room.Id, room.name, room.description)
     | _ -> raise (System.InvalidProgramException(Usage.ListRooms))   
                           
 let enterroom(token,svc:IChatServiceClient,args) =
@@ -172,7 +172,7 @@ let getmessages(token,svc:IChatServiceClient,args) =
         | [] -> svc.GetMessages(token,DateTime.MinValue)
         | _ -> raise (System.InvalidProgramException(Usage.GetMessages))
     for m in messages do
-        Console.WriteLine("  {0} {1:HHmm} {2}", m.userName, m.timestamp, m.rawMessage)
+        Console.WriteLine("  {0} {1:HHmm} {2} {3}", m.userName, m.timestamp, m.Id, m.rawMessage)
                       
 let postmessage(token,svc:IChatServiceClient,args) =
     match args with

@@ -36,7 +36,7 @@
             session.Query<User>().Count() = 0
         member this.InitRootUser(password:string) =
             use session = docStore.OpenSession()
-            let user = { name = "root"; passwordHash = PasswordHash.GenerateHashedPassword(password); fullName = "System Account"; isAdmin = true }
+            let user = { Id = null; name = "root"; passwordHash = PasswordHash.GenerateHashedPassword(password); fullName = "System Account"; isAdmin = true }
             session.Store(user)
             session.SaveChanges()
 
@@ -87,9 +87,7 @@
 
             member this.ListUsers(token:string) =
                 this.sessionWrapper token true false (fun (session,ls) ->
-                    session.Query<User>() 
-                        |> Seq.map(fun (u:User) -> (session.Advanced.GetDocumentId(u), u)) 
-                        |> Array.ofSeq
+                    session.Query<User>() |> Array.ofSeq
                     )
 
             member this.AddRoom(token:string, room:Room) =
@@ -108,9 +106,7 @@
 
             member this.ListRooms(token:string) =
                 this.sessionWrapper token false false (fun (session,ls) ->
-                    session.Query<Room>()
-                        |> Seq.map(fun (r:Room) -> (session.Advanced.GetDocumentId(r), r)) 
-                        |> Array.ofSeq
+                    session.Query<Room>() |> Array.ofSeq
                     )
 
             member this.EnterRoom(token:string, roomId:string) =
@@ -139,7 +135,7 @@
                 this.sessionWrapper token false true (fun (session,us) ->
                     match us.roomId with
                     | Some roomId ->
-                        let msg = { roomId = roomId; timestamp = DateTime.Now; userName = us.user.name; 
+                        let msg = { Id = null; roomId = roomId; timestamp = DateTime.Now; userName = us.user.name; 
                                     rawMessage = message; html = message }
                         session.Store(msg)
                     | None -> failwith "not in a room"

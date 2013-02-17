@@ -9,11 +9,11 @@
 
         abstract member AddUser: string * User -> string
         abstract member RemoveUser: string * string -> unit
-        abstract member ListUsers: string -> (string * User) array
+        abstract member ListUsers: string -> User array
 
         abstract member AddRoom: string * Room -> string
         abstract member RemoveRoom: string * string -> unit
-        abstract member ListRooms: string -> (string * Room) array
+        abstract member ListRooms: string -> Room array
 
         abstract member EnterRoom: string * string -> unit
         abstract member LeaveRoom: string -> unit
