@@ -136,7 +136,7 @@
                     match us.roomId with
                     | Some roomId ->
                         let msg = { Id = null; roomId = roomId; timestamp = DateTime.Now; userName = us.user.name; 
-                                    rawMessage = message; html = message }
+                                    rawMessage = message; html = MessageParser.Parse(message) }
                         session.Store(msg)
                     | None -> failwith "not in a room"
                 )

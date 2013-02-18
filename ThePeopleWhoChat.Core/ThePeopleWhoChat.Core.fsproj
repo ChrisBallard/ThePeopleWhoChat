@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="DataTypes.fs" />
     <Compile Include="LineParser.fs" />
+    <Compile Include="MessageParser.fs" />
     <Compile Include="IChatServiceClient.fs" />
     <Compile Include="ChatServiceClient.fs" />
     <Compile Include="PasswordHash.fs" />

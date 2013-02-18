@@ -101,7 +101,7 @@
         function getmessages() {
             get_messages(function (data) {
                 $("#messages").html(data.map(function (msg) {
-                    return "<br/>" + msg.userName + " " + moment(msg.timestamp).format("HHmm: ") + msg.rawMessage;
+                    return "<br/>" + msg.userName + " " + moment(msg.timestamp).format("HHmm: ") + msg.html;
                 }))
             }, function (msg) { $("#messages").html(msg); });
         }

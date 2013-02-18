@@ -124,7 +124,7 @@ function get_messages(success, failure) {
         headers: { 'Session-Token': sessionStorage.token }
     }).done(function (data) {
         var cleanData = data.map(function (msg) {
-            return { userName: msg.userName, timestamp: msg.timestamp, rawMessage: msg.rawMessage }
+            return { userName: msg.userName, timestamp: msg.timestamp, rawMessage: msg.rawMessage, html: msg.html }
         })
         success(cleanData)
     }).fail(function (x, msg) {
