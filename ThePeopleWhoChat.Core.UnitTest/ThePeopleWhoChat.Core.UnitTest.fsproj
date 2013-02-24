@@ -24,7 +24,7 @@
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Debug\ThePeopleWhoChat.Core.UnitTest.XML</DocumentationFile>
     <StartAction>Program</StartAction>
-    <StartProgram>C:\Program Files\NUnit 2.6.2\bin\nunit.exe</StartProgram>
+    <StartProgram>C:\Program Files (x86)\NUnit 2.6.2\bin\nunit.exe</StartProgram>
     <StartArguments>ThePeopleWhoChat.Core.UnitTest.dll</StartArguments>
     <StartWorkingDirectory>C:\Users\Chris\Documents\GitHub\ThePeopleWhoChat\ThePeopleWhoChat.Core.UnitTest\bin\Debug\</StartWorkingDirectory>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
@@ -47,9 +47,18 @@
     <Compile Include="LineParserTests.fs" />
     <Compile Include="PasswordHashTests.fs" />
     <Compile Include="MessageParserTests.fs" />
+    <Compile Include="Spikes.fs" />
     <None Include="packages.config" />
+    <None Include="..\ThePeopleWhoChat.AdminTool\App.config">
+      <Link>App.config</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ThePeopleWhoChat.Data\ThePeopleWhoChat.Data.fsproj">
+      <Name>ThePeopleWhoChat.Data</Name>
+      <Project>{8bdefb41-3b4c-410c-bba3-f149ba9658a6}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
@@ -58,7 +67,15 @@
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Raven.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Raven.Client.Lightweight, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <ProjectReference Include="..\ThePeopleWhoChat.Core\ThePeopleWhoChat.Core.fsproj">

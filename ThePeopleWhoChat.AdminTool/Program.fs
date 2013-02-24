@@ -1,13 +1,16 @@
 ﻿open ThePeopleWhoChat.Core
 open ThePeopleWhoChat.Data
 open System
+open System.Net
 open System.Configuration
 open System.Text
+open System.Threading
 
 type Usage =
     static member General = "Invalid command. Type 'help' for further information."
     static member Connect = "connect [url]"
     static member ConnectDb = "connectdb [dbUrl]"
+    static member DeleteAll = "deleteall [dbUrl]"
     static member Login = "login <username>"
     static member Logout = "logout"
     static member ListSessions = "listsessions"
@@ -19,10 +22,10 @@ type Usage =
     static member ListRooms = "listrooms"
     static member Enter = "enter <roomId>"
     static member Leave = "leave"
-    static member GetMessages = "getm [from:dateTime]"
+    static member GetMessages = "getm (tail | [from:dateTime])"
     static member PostMessage = "post [message]"
     static member Help() =
-        let msgs = [| Usage.Connect; Usage.ConnectDb; Usage.Login; Usage.Logout; Usage.ListSessions; Usage.AddUser; 
+        let msgs = [| Usage.Connect; Usage.ConnectDb; Usage.DeleteAll; Usage.Login; Usage.Logout; Usage.ListSessions; Usage.AddUser; 
                       Usage.RemoveUser; Usage.ListUsers; Usage.AddRoom; Usage.RemoveRoom; Usage.ListRooms; 
                       Usage.Enter; Usage.Leave; Usage.GetMessages; Usage.PostMessage |]
         Console.WriteLine("Usage:")
@@ -46,19 +49,32 @@ let getPassword(prompt:string) =
     Console.WriteLine()
     pw.ToString()
 
-let connectDb(args) =
-    let dbUrl = 
-        match args with
-        | [] -> ConfigurationManager.AppSettings.[Consts.DbUrlSettingKey]
-        | x::[] -> x
-        | _ -> raise (System.InvalidProgramException(Usage.ConnectDb))
-    let rawDb = ChatDataConnection(dbUrl)
-    Console.WriteLine("Connected directly to database {0}",dbUrl)
-    if rawDb.IsDbEmpty() then
+let checkAndCreateRoot(db:ChatDataConnection) =
+    if db.IsDbEmpty() then
         Console.WriteLine("Database is empty. Creating user 'root'")
         let rootPw = getPassword("Enter root password: ")
-        rawDb.InitRootUser(rootPw)
-    rawDb :> IChatServiceClient
+        db.InitRootUser(rootPw)
+
+let getDbUrl(usage) = function
+    | [] -> ConfigurationManager.AppSettings.[Consts.DbUrlSettingKey]
+    | x::[] -> x
+    | _ -> raise (System.InvalidProgramException(usage))
+
+let serverNotRunning() =
+    let s = StringBuilder("Failed to connect to the RavenDb server.\r\n")
+    s.Append("Run RavenDb/Server/Raven.Server.exe prior to starting this shell") |> ignore
+    s.ToString() |> failwith
+
+let connectDb(args) =
+    let dbUrl = getDbUrl(Usage.ConnectDb)(args)
+    try
+        let rawDb = ChatDataConnection(dbUrl)
+        Console.WriteLine("Connecting directly to database {0}",dbUrl)
+        checkAndCreateRoot(rawDb)
+        Console.WriteLine("Connected")
+        rawDb :> IChatServiceClient
+    with
+    | :? WebException -> serverNotRunning()
 
 let connectUrl(args) =
     let url = 
@@ -70,9 +86,24 @@ let connectUrl(args) =
     Console.WriteLine("Connected to server {0}",url)
     svc :> IChatServiceClient
 
+let deleteall(args) =
+    let dbUrl = getDbUrl(Usage.DeleteAll)(args)
+    try
+        Console.Write("Sure about that? (Y/N)")
+        let c = Console.ReadKey().KeyChar
+        Console.WriteLine()
+        match c with
+        | 'y' | 'Y' ->
+            let rawDb = ChatDataConnection(dbUrl)
+            rawDb.DeleteAll()
+            Console.WriteLine("All data deleted. Reconnect to create 'root' user")
+        | _ -> Console.WriteLine("Aborted")
+    with
+    | :? WebException -> serverNotRunning()
+
 type commandAction = string * IChatServiceClient * string list -> unit
 type commandFunc<'T> = string * IChatServiceClient * string list -> 'T
-
+          
 let login(token,svc:IChatServiceClient,args) =
     let username = 
         match args with
@@ -148,10 +179,13 @@ let listrooms(token,svc:IChatServiceClient,args) =
             Console.WriteLine("    id: {0}, name: {1}, description: {2}", room.Id, room.name, room.description)
     | _ -> raise (System.InvalidProgramException(Usage.ListRooms))   
                           
+let mutable lastMessage = DateTime.MinValue
+
 let enterroom(token,svc:IChatServiceClient,args) =
     match args with
     | roomId::[] ->
         svc.EnterRoom(token,roomId)
+        lastMessage <- DateTime.MinValue
         Console.WriteLine("Entered room: {0}", roomId)
     | _ -> raise (System.InvalidProgramException(Usage.Enter))
     
@@ -162,17 +196,29 @@ let leaveroom(token,svc:IChatServiceClient,args) =
         Console.WriteLine("Left the room")
     | _ -> raise (System.InvalidProgramException(Usage.Leave))          
     
-let getmessages(token,svc:IChatServiceClient,args) =
-    let messages =
+let rec getmessages(token,svc:IChatServiceClient,args) =
+    let (fromTime, tailmode) =
         match args with
+        | "tail"::[] -> lastMessage,true
         | dateStr::[] ->
             let valid,date = DateTime.TryParse(dateStr)
-            if valid then svc.GetMessages(token,date) 
+            if valid then date,false
             else raise (System.InvalidProgramException(Usage.GetMessages))
-        | [] -> svc.GetMessages(token,DateTime.MinValue)
+        | [] -> lastMessage,false
         | _ -> raise (System.InvalidProgramException(Usage.GetMessages))
+    let messages = svc.GetMessages(token, fromTime)
     for m in messages do
         Console.WriteLine("  {0} {1:HHmm} {2} {3}", m.userName, m.timestamp, m.Id, m.rawMessage)
+        lastMessage <- m.timestamp
+    if tailmode then
+        Thread.Sleep(1000)
+        if Console.KeyAvailable then
+            let key = Console.ReadKey().KeyChar
+            if key = 'q' || key = 'Q' then ()
+            else getmessages(token,svc,args)
+        else getmessages(token,svc,args)
+
+            
                       
 let postmessage(token,svc:IChatServiceClient,args) =
     match args with
@@ -222,6 +268,10 @@ let main _ =
             | "connect"::args ->
                 let svc = connectUrl(args)
                 dataConnection := Some svc
+            | "deleteall"::args ->
+                deleteall(args)
+                dataConnection := None
+                Console.WriteLine("Disconnected")
             | "login"::args ->
                 token <- executeFunc(token,args,login)
             | "logout"::args ->

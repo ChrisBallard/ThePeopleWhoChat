@@ -39,6 +39,16 @@
             let user = { Id = null; name = "root"; passwordHash = PasswordHash.GenerateHashedPassword(password); fullName = "System Account"; isAdmin = true }
             session.Store(user)
             session.SaveChanges()
+        member this.DeleteAll() =
+            use session = docStore.OpenSession()
+            let delete x = session.Delete(x)
+            session.Query<Message>() |> Seq.iter(delete)
+            session.Query<Room>() |> Seq.iter(delete)
+            session.Query<User>() |> Seq.iter(delete)
+//            session.Query("Raven/Hilo/message") |> Seq.iter(delete)
+//            session.Query("Raven/Hilo/room") |> Seq.iter(delete)
+//            session.Query("Raven/Hilo/user") |> Seq.iter(delete)
+            session.SaveChanges()
 
         interface IChatServiceClient with
             member this.Login(username:string,password:string) =
