@@ -68,7 +68,7 @@
     <Content Include="Index.htm" />
     <Content Include="Login.htm" />
     <Content Include="packages.config" />
-    <None Include="Properties\PublishProfiles\Publish Google Drive.pubxml" />
+    <None Include="Properties\PublishProfiles\Publish to My Documents.pubxml" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />

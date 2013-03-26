@@ -5,6 +5,8 @@
 
     type Consts = 
         static member DbUrlSettingKey = "ChatDbUrl"
+        static member DevUrlSettingKey = "DevServiceUrl"
+        static member LiveUrlSettingKey = "LiveServiceUrl"
         static member TokenHeaderName = "Session-Token"
         static member ErrorHeaderName = "Error-Message"
         static member CacheHeaderName = "Cache-Control"
@@ -42,6 +44,7 @@
         [<DataMember>] mutable Id: string;
         [<DataMember>] mutable roomId: string;
         [<DataMember>] mutable timestamp: DateTime;
+        [<DataMember>] mutable tickCount: int;
         [<DataMember>] mutable userName: string;
         [<DataMember>] mutable rawMessage: string;
         [<DataMember>] mutable html: string

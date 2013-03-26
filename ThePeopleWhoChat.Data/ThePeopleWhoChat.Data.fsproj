@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="ChatDataConnection.fs" />
     <None Include="packages.config" />
+    <Compile Include="Data.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

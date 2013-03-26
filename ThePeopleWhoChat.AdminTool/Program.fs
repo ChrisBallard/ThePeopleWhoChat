@@ -1,6 +1,7 @@
 ﻿open ThePeopleWhoChat.Core
 open ThePeopleWhoChat.Data
 open System
+open System.IO
 open System.Net
 open System.Configuration
 open System.Text
@@ -8,7 +9,7 @@ open System.Threading
 
 type Usage =
     static member General = "Invalid command. Type 'help' for further information."
-    static member Connect = "connect [url]"
+    static member Connect = "connect (dev|live|<url>)"
     static member ConnectDb = "connectdb [dbUrl]"
     static member DeleteAll = "deleteall [dbUrl]"
     static member Login = "login <username>"
@@ -60,6 +61,12 @@ let getDbUrl(usage) = function
     | x::[] -> x
     | _ -> raise (System.InvalidProgramException(usage))
 
+let getServiceUrl(usage) = function
+    | str::[] when String.Compare(str,"dev",true)=0 -> ConfigurationManager.AppSettings.[Consts.DevUrlSettingKey]
+    | str::[] when String.Compare(str,"live",true)=0 -> ConfigurationManager.AppSettings.[Consts.LiveUrlSettingKey]
+    | url::[] -> url
+    | _ -> raise (System.InvalidProgramException(usage))
+
 let serverNotRunning() =
     let s = StringBuilder("Failed to connect to the RavenDb server.\r\n")
     s.Append("Run RavenDb/Server/Raven.Server.exe prior to starting this shell") |> ignore
@@ -77,13 +84,9 @@ let connectDb(args) =
     | :? WebException -> serverNotRunning()
 
 let connectUrl(args) =
-    let url = 
-        match args with
-        | [] -> "http://localhost:53690/Chat.svc"
-        | x::[] -> x
-        | _ -> raise (System.InvalidProgramException(Usage.Connect))
-    let svc = ServiceClient(url)
-    Console.WriteLine("Connected to server {0}",url)
+    let svcUrl = getServiceUrl(Usage.Connect)(args)
+    let svc = ServiceClient(svcUrl)
+    Console.WriteLine("Connected to server {0}",svcUrl)
     svc :> IChatServiceClient
 
 let deleteall(args) =
@@ -196,27 +199,30 @@ let leaveroom(token,svc:IChatServiceClient,args) =
         Console.WriteLine("Left the room")
     | _ -> raise (System.InvalidProgramException(Usage.Leave))          
     
-let rec getmessages(token,svc:IChatServiceClient,args) =
+let getmessages(token,svc:IChatServiceClient,args) =
     let (fromTime, tailmode) =
         match args with
-        | "tail"::[] -> lastMessage,true
-        | dateStr::[] ->
+        | "tail"::[] -> Console.WriteLine("tail mode. press Q to end.")
+                        lastMessage,true
+        | dateStr::ticksStr::[] ->
             let valid,date = DateTime.TryParse(dateStr)
             if valid then date,false
             else raise (System.InvalidProgramException(Usage.GetMessages))
         | [] -> lastMessage,false
         | _ -> raise (System.InvalidProgramException(Usage.GetMessages))
-    let messages = svc.GetMessages(token, fromTime)
-    for m in messages do
-        Console.WriteLine("  {0} {1:HHmm} {2} {3}", m.userName, m.timestamp, m.Id, m.rawMessage)
-        lastMessage <- m.timestamp
-    if tailmode then
-        Thread.Sleep(1000)
-        if Console.KeyAvailable then
-            let key = Console.ReadKey().KeyChar
-            if key = 'q' || key = 'Q' then ()
-            else getmessages(token,svc,args)
-        else getmessages(token,svc,args)
+    let rec innergetmessages(fromTime) =
+        let messages = svc.GetMessages(token, fromTime)
+        for m in messages do
+            Console.WriteLine("  {0:HHmm} {1}: {2}", m.timestamp, m.userName, m.rawMessage)
+            lastMessage <- m.timestamp
+        if tailmode then
+            Thread.Sleep(1000)
+            if Console.KeyAvailable then
+                let key = Console.ReadKey().KeyChar
+                if key = 'q' || key = 'Q' then Console.WriteLine()
+                else innergetmessages(lastMessage)
+            else innergetmessages(lastMessage)
+    innergetmessages(fromTime)
 
             
                       
@@ -230,7 +236,7 @@ let postmessage(token,svc:IChatServiceClient,args) =
     | _ -> raise (System.InvalidProgramException(Usage.PostMessage))
 
 [<EntryPoint>]
-let main _ =
+let main args =
 
     let (dataConnection:IChatServiceClient option ref) = ref None
 
@@ -247,6 +253,8 @@ let main _ =
 
     let mutable token = ""
 
+    let rec fileReader() = File.ReadAllLines(args.[0]) |> Seq.ofArray
+
     let rec consoleReader() = seq {
         Console.Write("> ")
         let line = Console.ReadLine()
@@ -257,7 +265,9 @@ let main _ =
                yield! consoleReader()
         }
 
-    for line in consoleReader() do
+    let reader = if args.Length = 1 then fileReader() else consoleReader()
+
+    for line in reader do
 
         try
             match (line |> LineParser.SpaceSeperatedParser.Parse |> List.ofSeq) with

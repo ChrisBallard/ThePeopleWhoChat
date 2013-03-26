@@ -8,7 +8,7 @@
     type PasswordHash() =
         static let hashProvider = new SHA256Managed()
         static let saltLength = 4
-        static let minPasswordLength = 8
+        static let minPasswordLength = 7
         static let separatorChar = ' '
 
         static member private ComputeHash(data:byte[],salt:byte[]) =

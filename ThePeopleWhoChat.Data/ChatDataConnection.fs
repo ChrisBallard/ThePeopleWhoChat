@@ -4,9 +4,10 @@
     open System.IO
     open System.Linq
     open System.Collections.Generic
+    open Raven
     open Raven.Client
     open Raven.Client.Document
-    open Raven
+
     open ThePeopleWhoChat.Core
 
     type ChatDataConnection(dbPath:string) =
@@ -119,12 +120,12 @@
                     session.Query<Room>() |> Array.ofSeq
                     )
 
-            member this.EnterRoom(token:string, roomId:string) =
+            member this.EnterRoom(token:string, roomName:string) =
                 this.sessionWrapper token false false (fun (session,us) ->
-                    let exists = session.Load<Room>(roomId)
-                    match box exists with
-                    | null -> failwith (sprintf "Unknown room: %s" roomId)
-                    | _ -> us.roomId <- Some roomId
+                    let room = session.Query<Room>().FirstOrDefault(fun (r:Room) -> r.name = roomName)
+                    match box room with
+                    | null -> failwith (sprintf "Unknown room: %s" roomName)
+                    | _ -> us.roomId <- Some room.Id
                 )
 
             member this.LeaveRoom(token:string) =
@@ -136,8 +137,11 @@
                 this.sessionWrapper token false false (fun (session,us) ->
                     match us.roomId with
                     | Some roomId ->
-                        session.Query<Message>().Where(fun (m:Message) -> m.roomId = roomId && m.timestamp > from)
-                        |> Array.ofSeq
+                        let millisecondCompare msg =
+                            (msg.timestamp - from).TotalMilliseconds > 1.0
+                        let messages = session.Query<Message>().Where(fun (m:Message) -> m.roomId = roomId && m.timestamp > from)
+                                            |> Seq.filter(millisecondCompare) |> Array.ofSeq
+                        messages
                     | None -> failwith "not in a room"
                 )
 
@@ -145,7 +149,7 @@
                 this.sessionWrapper token false true (fun (session,us) ->
                     match us.roomId with
                     | Some roomId ->
-                        let msg = { Id = null; roomId = roomId; timestamp = DateTime.Now; userName = us.user.name; 
+                        let msg = { Id = null; roomId = roomId; timestamp = DateTime.Now.ToLocalTime(); tickCount = Environment.TickCount; userName = us.user.name; 
                                     rawMessage = message; html = MessageParser.Parse(message) }
                         session.Store(msg)
                     | None -> failwith "not in a room"

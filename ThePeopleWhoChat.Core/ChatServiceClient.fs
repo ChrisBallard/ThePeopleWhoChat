@@ -115,7 +115,7 @@
                 this.deleteData(token,"currentroom")
 
             member this.GetMessages(token:string, from:DateTime) =
-                this.getData<Message array>(token, String.Format("messages?after={0}",from))
+                this.getData<Message array>(token, String.Format("messages?after={0:yyyyMMddHHmmssfffffff}",from))
 
             member this.PostMessage(token:string, message:string) =
                 this.putDataUnit<MessageText>(token,"messages",{message = message})

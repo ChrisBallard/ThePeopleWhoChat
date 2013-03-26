@@ -13,7 +13,7 @@
         [<Test>]
         member this.``spikes to be enabled & run as and when required``() = ()
 
-        //[<Test>]
+        [<Test>]
         member this.``ravenDb will respect millisecond time differences in orderBy``() =
             // note this spike requires the database to be empty. run deleteall in the AdminTool before running this
             let url = ConfigurationManager.AppSettings.[Consts.DbUrlSettingKey]

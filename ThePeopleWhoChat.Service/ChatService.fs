@@ -110,7 +110,7 @@
         member this.GetMessages(after:string) =
             this.ImplementationWrapper((fun () -> 
                 cache(Consts.CacheNoCache)
-                let valid,date = DateTime.TryParse(after)
+                let valid,date = DateTime.TryParseExact(after,"yyyyMMddHHmmssfffffff",null,Globalization.DateTimeStyles.AssumeLocal)
                 if valid then
                     let results = data.GetMessages(getToken(),date)
                     results

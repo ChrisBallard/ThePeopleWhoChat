@@ -8,7 +8,7 @@ open System
 [<EntryPoint>]
 let main argv = 
 
-    let uri = new Uri("http://localhost:8080/chat")
+    let uri = new Uri("http://localhost:53691/Chat.svc")
     use host = new WebServiceHost(typeof<ChatService>, uri);
     host.Open()
 
