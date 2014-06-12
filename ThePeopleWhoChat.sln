@@ -1,6 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2058598D-7619-4635-9828-D9762B6823A6}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPFApplication", "WPFApplication", "{F3BA0ECE-8354-43AB-834A-E4E7A18C274C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPFApplication.CS", "WPFApplication.CS", "{6363F712-6AFD-48E9-9431-3EDBE217FC26}"
+EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.ServiceHost", "ThePeopleWhoChat.ServiceHost\ThePeopleWhoChat.ServiceHost.fsproj", "{AD9190AC-0C02-4CB0-ADC1-07DFD371A412}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.Service", "ThePeopleWhoChat.Service\ThePeopleWhoChat.Service.fsproj", "{D78FABD6-5333-4DA6-86F7-A08031C74DE5}"
@@ -15,24 +28,13 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.Data", "Th
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.Core.UnitTest", "ThePeopleWhoChat.Core.UnitTest\ThePeopleWhoChat.Core.UnitTest.fsproj", "{AA5D3C9D-3B29-4AFF-96CA-A0D64A625BA8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2058598D-7619-4635-9828-D9762B6823A6}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.App", "ThePeopleWhoChat.App\ThePeopleWhoChat.App.fsproj", "{54535057-E73E-4DCF-8C15-D0058AE17030}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPFApplication", "WPFApplication", "{F3BA0ECE-8354-43AB-834A-E4E7A18C274C}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.App.RoomsList", "ThePeopleWhoChat.App.RoomsList\ThePeopleWhoChat.App.RoomsList.fsproj", "{BF218413-AC5A-464A-9CDC-99D3EA7EF323}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.App.Core", "ThePeopleWhoChat.App.Core\ThePeopleWhoChat.App.Core.fsproj", "{0BCA6954-A682-4CF7-A88A-4033BA0729F1}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ThePeopleWhoChat.App.MessagesList", "ThePeopleWhoChat.App.MessagesList\ThePeopleWhoChat.App.MessagesList.fsproj", "{91ABA1A7-7F41-4369-84F5-9CB6D7EC39D7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPFApplication.CS", "WPFApplication.CS", "{6363F712-6AFD-48E9-9431-3EDBE217FC26}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThePeopleWhoChat.App.CS", "ThePeopleWhoChat.App.CS\ThePeopleWhoChat.App.CS.csproj", "{158ABF2E-17FF-4815-8CE9-87C1BEF6FF86}"
 EndProject
