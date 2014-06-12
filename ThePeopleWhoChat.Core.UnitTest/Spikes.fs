@@ -11,6 +11,7 @@
     type Spikes() =
 
         [<Test>]
+        [<Ignore>]
         member this.``spikes to be enabled & run as and when required``() = ()
 
         [<Test>]
